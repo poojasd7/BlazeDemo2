@@ -22,8 +22,6 @@ public class BlazeDemoStepDefs extends PageActions {
     public BlazeDemoStepDefs(World world) throws IOException {
         super(world.driver);
         this.world = world;
-        driverObj = new Driver(world);
-        driverObj.startWebDriver();
         blazeDemoHome = new BlazeDemoHome(world.driver);
     }
 

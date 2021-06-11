@@ -31,11 +31,14 @@ public class Driver {
         this.world = world;
     }
 
+    public Driver() throws IOException {
+        }
+
+
     /*
      * Checks to see what OS we are using and uses the appropriate driver
      */
 
-    @Before
     public void startWebDriverOld() {
         System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "\\src\\test\\resources\\data\\chromedriver_win32\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
@@ -53,7 +56,8 @@ public class Driver {
         options.addArguments("--disable-browser-side-navigation");
         options.addArguments("--dns-prefetch-disable");
         options.addArguments("--disable-web-security");
-        this.world.driver = new ChromeDriver(options);
+        if(this.world.driver==null)
+            this.world.driver = new ChromeDriver(options);
     }
 
     public void startWebDriver() throws IOException {

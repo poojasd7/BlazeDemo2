@@ -24,28 +24,32 @@ public class PageActions {
     public Integer EXPLICIT_WAIT_180_SEC = 180;
     public StringBuffer VERIFICATION_ERRORS = new StringBuffer();
 
-    private WebDriver driver;
+    //private WebDriver driver;
     private Driver dr;
 
     public PageActions(WebDriver driver) throws IOException {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
+        if (driver == null) {
+            dr = new Driver();
+            dr.startWebDriverOld();
+            driver = dr.world.driver;
+            PageFactory.initElements(driver, this);
+        }
     }
 
     public WebElement waitUntilClickable(WebElement element) {
-        WebDriverWait wait = new WebDriverWait(driver, 140);
+        WebDriverWait wait = new WebDriverWait(dr.world.driver, 140);
         wait.pollingEvery(Duration.ofSeconds(1));
         return wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
     public boolean verifyWebElementPresent(WebElement element) {
-        WebDriverWait wait = new WebDriverWait(driver, EXPLICIT_WAIT_180_SEC);
+        WebDriverWait wait = new WebDriverWait(dr.world.driver, EXPLICIT_WAIT_180_SEC);
         wait.pollingEvery(Duration.ofSeconds(1));
         try {
             wait.until(ExpectedConditions.visibilityOf(element));
             return true;
         } catch (NoSuchElementException | NoSuchFrameException | NoSuchWindowException | ErrorHandler.UnknownServerException | TimeoutException e) {
-            driver.navigate().refresh();
+            dr.world.driver.navigate().refresh();
             VERIFICATION_ERRORS.append("Element: " + element + " is not present on page \n -Caugth exception: "
                     + e.getMessage() + "\n\n");
             return false;
@@ -57,7 +61,7 @@ public class PageActions {
         String scrollElementIntoMiddle = "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
                 + "var elementTop = arguments[0].getBoundingClientRect().top;"
                 + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
-        ((JavascriptExecutor) driver).executeScript(scrollElementIntoMiddle, element);
+        ((JavascriptExecutor) dr.world.driver).executeScript(scrollElementIntoMiddle, element);
     }
 
     public void waitForElementToAppear(WebElement element) {
@@ -72,7 +76,7 @@ public class PageActions {
     }
 
     public Boolean verifyWebElementByVisible(By by, int explicitWait) {
-        WebDriverWait wait = new WebDriverWait(driver, explicitWait);
+        WebDriverWait wait = new WebDriverWait(dr.world.driver, explicitWait);
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
             return true;
@@ -85,8 +89,7 @@ public class PageActions {
     public void clickWebElement(WebElement element) throws InterruptedException {
         try {
             element.click();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             waitForElementToAppear(element);
             waitUntilClickable(element);
             executeJavaScriptScroll(element);
@@ -94,7 +97,7 @@ public class PageActions {
     }
 
     public boolean verifyUnclickability(WebElement element) throws InterruptedException {
-        if(element.getAttribute("aria-disabled").toString().equalsIgnoreCase("true"))
+        if (element.getAttribute("aria-disabled").toString().equalsIgnoreCase("true"))
             return true;
         else return false;
     }
@@ -110,9 +113,9 @@ public class PageActions {
 
     public String navigateToURL(String url) throws InterruptedException {
         LOGGER.info("Navigate to url: " + url);
-        driver.manage().window().maximize();
-        driver.navigate().to(url);
-        driver.get(url);
-        return driver.getTitle();
+        dr.world.driver.manage().window().maximize();
+        dr.world.driver.navigate().to(url);
+        dr.world.driver.get(url);
+        return dr.world.driver.getTitle();
     }
 }

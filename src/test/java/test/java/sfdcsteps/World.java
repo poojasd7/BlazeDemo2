@@ -9,6 +9,5 @@ import java.util.List;
 import java.util.Map;
 
 public class World {
-    public WebDriver driver;
-
+    public static WebDriver driver;
 }
