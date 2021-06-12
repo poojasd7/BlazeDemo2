@@ -8,3 +8,10 @@ Feature: Verify BlazeDemo Functionality
    Then user validates confirmation Id
 
 
+  @APITest
+  Scenario: APITest - Verify SpaceX
+    Given user hits the get spaceX to check status code
+    Then user hits the get spaceX to check payload
+    Then user hits the get spaceX to get cores and ships
+
+
